@@ -8,9 +8,11 @@ function getNodeColor(node, isVisited, isPath) {
   if (node.isStart) return '#f4d03f'
   if (node.isEnd) return '#e74c3c'
   if (node.isWall) return '#4a5d3a'
-  if (isPath) return '#ff69b4' // blooming vine trail
-  if (isVisited) return '#a3c99b' // watered/sprouted soil
-  return '#e8dcc4'
+  if (isPath) return '#ff69b4'
+  if (isVisited) return node.weight >= 10 ? '#4a7ba8' : node.weight >= 5 ? '#8a9a5b' : '#a3c99b'
+  if (node.weight >= 10) return '#5b9bd5' // water
+  if (node.weight >= 5) return '#8b6f47' // mud
+  return '#e8dcc4' // clear soil
 }
 
 function GridCanvas() {
@@ -18,7 +20,7 @@ function GridCanvas() {
   const grid = useGridStore((state) => state.grid)
   const rows = useGridStore((state) => state.rows)
   const cols = useGridStore((state) => state.cols)
-  const toggleWall = useGridStore((state) => state.toggleWall)
+  const applyBrush = useGridStore((state) => state.applyBrush)
 
   const visitedOrder = useAlgorithmStore((state) => state.visitedOrder)
   const visibleVisitedCount = useAlgorithmStore((state) => state.visibleVisitedCount)
@@ -69,7 +71,7 @@ function GridCanvas() {
     const col = Math.floor((e.clientX - rect.left) / CELL_SIZE)
     const row = Math.floor((e.clientY - rect.top) / CELL_SIZE)
     if (row >= 0 && row < rows && col >= 0 && col < cols) {
-      toggleWall(row, col)
+      applyBrush(row, col)
     }
   }
 

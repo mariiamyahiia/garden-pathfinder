@@ -76,3 +76,17 @@ export function getNeighbors(grid, row, col, { diagonal = false } = {}) {
   }
   return neighbors
 }
+
+export const TERRAIN = {
+  CLEAR: { weight: 1 },
+  MUD: { weight: 5 },
+  WATER: { weight: 10 },
+}
+
+export function setTerrain(grid, row, col, weight) {
+  const node = grid[row][col]
+  if (node.isStart || node.isEnd || node.isWall) return grid
+  const newGrid = cloneGrid(grid)
+  newGrid[row][col].weight = weight
+  return newGrid
+}
