@@ -1,10 +1,10 @@
 import { useGridStore } from '../../../store/gridStore'
 
 const BRUSHES = [
-  { id: 'wall', label: '🪨 Rock/Hedge' },
-  { id: 'mud', label: '🟤 Mud' },
-  { id: 'water', label: '💧 Water' },
-  { id: 'clear', label: '🌱 Clear Soil' },
+  { id: 'wall', label: 'Rock/Hedge' },
+  { id: 'mud', label: 'Mud' },
+  { id: 'water', label: 'Water' },
+  { id: 'clear', label: 'Clear Soil' },
 ]
 
 function BrushSelector() {

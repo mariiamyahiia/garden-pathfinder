@@ -1,13 +1,16 @@
 import { create } from 'zustand'
-import { createGrid, toggleWall, setStart, setEnd, setTerrain, TERRAIN } from '../features/grid/logic/grid'
+import {
+  createGrid, toggleWall, setStart, setEnd, setTerrain, TERRAIN,
+} from '../features/grid/logic/grid'
+import { prepareGridForMaze, applyMazeSteps } from '../features/maze/logic/mazeUtils'
 
-const ROWS = 20
-const COLS = 40
+const ROWS = 21
+const COLS = 41
 
 export const useGridStore = create((set, get) => ({
   rows: ROWS,
   cols: COLS,
-  grid: createGrid(ROWS, COLS, { row: 10, col: 5 }, { row: 10, col: 34 }),
+  grid: createGrid(ROWS, COLS, { row: 9, col: 5 }, { row: 9, col: 35 }),
   brush: 'wall', // 'wall' | 'mud' | 'water' | 'clear'
 
   setBrush: (brush) => set({ brush }),
@@ -20,4 +23,10 @@ export const useGridStore = create((set, get) => ({
 
   setStart: (row, col) => set((state) => ({ grid: setStart(state.grid, row, col) })),
   setEnd: (row, col) => set((state) => ({ grid: setEnd(state.grid, row, col) })),
+
+  prepareForMaze: (initial) =>
+    set((state) => ({ grid: prepareGridForMaze(state.grid, initial) })),
+
+  commitMazeSteps: (steps) =>
+    set((state) => ({ grid: applyMazeSteps(state.grid, steps) })),
 }))

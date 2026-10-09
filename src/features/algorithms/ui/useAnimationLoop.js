@@ -1,9 +1,5 @@
 import { useRef, useEffect } from 'react'
 
-// Generic requestAnimationFrame-driven stepper. Advances `stepsPerSecond`
-// steps per second via onStep(count), until totalSteps is reached.
-// Reused later for Dijkstra/A* visited animation, path animation, and
-// eventually the Play/Pause/Step controls in Phase 7.
 export function useAnimationLoop({ totalSteps, stepsPerSecond, onStep, active }) {
   const rafRef = useRef(null)
   const lastTimeRef = useRef(null)
@@ -12,7 +8,7 @@ export function useAnimationLoop({ totalSteps, stepsPerSecond, onStep, active })
   useEffect(() => {
     countRef.current = 0
     lastTimeRef.current = null
-  }, [totalSteps])
+  }, [active, totalSteps])
 
   useEffect(() => {
     if (!active || totalSteps === 0) return
