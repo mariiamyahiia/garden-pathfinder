@@ -14,7 +14,7 @@ export function recursiveDivision(rows, cols, rng = Math.random) {
   function divide(r1, r2, c1, c2) {
     const height = r2 - r1 + 1
     const width = c2 - c1 + 1
-    if (height < 3 || width < 3) return // already a corridor
+    if (height < 3 || width < 3) return 
 
     let horizontal
     if (width > height) horizontal = false

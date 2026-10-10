@@ -1,35 +1,42 @@
 import { useRef, useEffect } from 'react'
 
-export function useAnimationLoop({ totalSteps, stepsPerSecond, onStep, active }) {
-  const rafRef = useRef(null)
-  const lastTimeRef = useRef(null)
-  const countRef = useRef(0)
+const MAX_FRAME_MS = 100
+
+export function useAnimationLoop({ active, stepsPerSecond, onAdvance }) {
+  const speedRef = useRef(stepsPerSecond)
+  const advanceRef = useRef(onAdvance)
 
   useEffect(() => {
-    countRef.current = 0
-    lastTimeRef.current = null
-  }, [active, totalSteps])
-
+    speedRef.current = stepsPerSecond
+    advanceRef.current = onAdvance
+  })
   useEffect(() => {
-    if (!active || totalSteps === 0) return
+    if (!active) return
+
+    let rafId
+    let cancelled = false
+    let last = null
+    let carry = 0 
 
     function tick(timestamp) {
-      if (lastTimeRef.current === null) lastTimeRef.current = timestamp
-      const elapsed = timestamp - lastTimeRef.current
-      const stepsToAdvance = Math.floor((elapsed / 1000) * stepsPerSecond)
-
-      if (stepsToAdvance > 0) {
-        countRef.current = Math.min(countRef.current + stepsToAdvance, totalSteps)
-        lastTimeRef.current = timestamp
-        onStep(countRef.current)
+      if (cancelled) return
+      if (last !== null) {
+        const dt = Math.min(timestamp - last, MAX_FRAME_MS)
+        carry += (dt / 1000) * speedRef.current
+        const whole = Math.floor(carry)
+        if (whole > 0) {
+          carry -= whole
+          advanceRef.current(whole)
+        }
       }
-
-      if (countRef.current < totalSteps) {
-        rafRef.current = requestAnimationFrame(tick)
-      }
+      last = timestamp
+      rafId = requestAnimationFrame(tick)
     }
 
-    rafRef.current = requestAnimationFrame(tick)
-    return () => cancelAnimationFrame(rafRef.current)
-  }, [active, totalSteps, stepsPerSecond, onStep])
+    rafId = requestAnimationFrame(tick)
+    return () => {
+      cancelled = true
+      cancelAnimationFrame(rafId)
+    }
+  }, [active])
 }

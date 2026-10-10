@@ -1,4 +1,3 @@
-import { useCallback } from 'react'
 import { useMazeStore } from '../../../store/mazeStore'
 import { useAnimationLoop } from '../../algorithms/ui/useAnimationLoop'
 
@@ -9,33 +8,34 @@ function MazeControls() {
   const setGenerator = useMazeStore((state) => state.setGenerator)
   const generate = useMazeStore((state) => state.generate)
   const advance = useMazeStore((state) => state.advance)
-  const steps = useMazeStore((state) => state.steps)
   const status = useMazeStore((state) => state.status)
 
   useAnimationLoop({
-    totalSteps: steps.length,
-    stepsPerSecond: STEPS_PER_SECOND,
-    onStep: useCallback((count) => advance(count), [advance]),
     active: status === 'generating',
+    stepsPerSecond: STEPS_PER_SECOND,
+    onAdvance: advance,
   })
 
   const isGenerating = status === 'generating'
 
   return (
-    <div style={{ marginBottom: '0.5rem' }}>
+    <>
       <select
+        className="field"
+        aria-label="Maze type"
         value={generator}
         onChange={(e) => setGenerator(e.target.value)}
         disabled={isGenerating}
       >
+        <option value="none">None (empty garden)</option>
         <option value="dfs">Randomized DFS</option>
         <option value="prim">Prim's</option>
         <option value="division">Recursive Division</option>
       </select>
-      <button onClick={generate} disabled={isGenerating} style={{ marginLeft: '0.5rem' }}>
-        Generate Maze
+      <button className="btn" onClick={generate} disabled={isGenerating}>
+        {generator === 'none' ? 'Clear board' : 'Generate'}
       </button>
-    </div>
+    </>
   )
 }
 

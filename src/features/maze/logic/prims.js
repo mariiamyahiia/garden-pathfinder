@@ -28,7 +28,7 @@ export function prims(rows, cols, rng = Math.random) {
     candidates[i] = candidates[candidates.length - 1]
     candidates.pop()
 
-    if (inMaze.has(cellKey(to))) continue // would create a loop
+    if (inMaze.has(cellKey(to))) continue
     steps.push(openStep(midpoint(from, to)))
     addRoom(to)
   }

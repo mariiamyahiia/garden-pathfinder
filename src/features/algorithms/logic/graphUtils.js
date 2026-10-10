@@ -22,3 +22,12 @@ export function reconstructPath(cameFrom, endNode) {
   }
   return path
 }
+
+export function pathCost(path) {
+  if (!path) return null
+  return path.slice(1).reduce((sum, node) => sum + node.weight, 0)
+}
+
+export function costSoFar(path, visibleCount) {
+  return pathCost(path.slice(0, visibleCount))
+}

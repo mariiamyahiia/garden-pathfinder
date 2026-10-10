@@ -1,7 +1,6 @@
 import { create } from 'zustand'
 import { MAZE_GENERATORS } from '../features/maze/logic/generators'
 import { useGridStore } from './gridStore'
-import { useAlgorithmStore } from './algorithmStore'
 
 export const useMazeStore = create((set, get) => ({
   generator: 'dfs',
@@ -14,20 +13,16 @@ export const useMazeStore = create((set, get) => ({
   generate: () => {
     const { rows, cols, prepareForMaze } = useGridStore.getState()
     const { initial, steps } = MAZE_GENERATORS[get().generator](rows, cols)
-    useAlgorithmStore.getState().reset() // clear old visited/path overlay
     prepareForMaze(initial)
-    set({ steps, visibleCount: 0, status: 'generating' })
+    set({ steps, visibleCount: 0, status: steps.length > 0 ? 'generating' : 'idle' })
   },
 
-  advance: (count) => {
+  advance: (delta) => {
     const { steps, visibleCount } = get()
-    const next = Math.min(count, steps.length)
+    const next = Math.min(visibleCount + delta, steps.length)
     if (next > visibleCount) {
       useGridStore.getState().commitMazeSteps(steps.slice(visibleCount, next))
     }
-    set({
-      visibleCount: next,
-      status: next === steps.length ? 'idle' : 'generating',
-    })
+    set({ visibleCount: next, status: next >= steps.length ? 'idle' : 'generating' })
   },
 }))
